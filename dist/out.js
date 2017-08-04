@@ -10241,14 +10241,50 @@ var Calendar = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Calendar.__proto__ || Object.getPrototypeOf(Calendar)).call(this, props));
 
+    _this.handleDayClick = function (e) {
+      console.log('Clicked day!');
+      var daysArrayCopy = _this.state.daysArray;
+      var selectedArrayCopy = _this.state.selectedArray;
+
+      for (var i = 0; i < daysArrayCopy.length; i++) {
+        if (daysArrayCopy[i].date.format('L') === e.target.id) {
+          // console.log(daysArrayCopy[i].date.format('L'));
+          if (e.target.classList.contains('selected')) {
+            daysArrayCopy[i].isSelected = "";
+            var index = selectedArrayCopy.indexOf(e.target.id);
+            selectedArrayCopy.splice(index, 1);
+          } else {
+            daysArrayCopy[i].isSelected = "selected";
+            selectedArrayCopy.push(e.target.id);
+          }
+        }
+      }
+      var newState = {
+        daysArray: daysArrayCopy,
+        selectedArray: selectedArrayCopy
+      };
+      return _this.setState(newState);
+    };
+
+    _this.handleArrowClick = function (e) {
+      console.log('Clicked arrow!');
+      var newDate = _this.state.currentFirstDay.clone().add(e.target.dataset.step, "M");
+      var newState = {
+        currentFirstDay: newDate,
+        daysArray: _this.setDays(newDate)
+      };
+      return _this.setState(newState);
+    };
+
     _this.state = {
       today: _this.props.today,
       currentFirstDay: _this.props.today.clone().startOf('M'),
       daysNames: _this.setDaysNames(),
-      daysArray: _this.setDays(_this.props.today.clone().startOf('M')),
-      weeksArray: "",
-      selectedArray: ""
+      daysArray: "",
+      selectedArray: []
     };
+    _this.handleDayClick = _this.handleDayClick.bind(_this);
+    _this.handleArrowClick = _this.handleArrowClick.bind(_this);
     return _this;
   }
 
@@ -10256,8 +10292,7 @@ var Calendar = function (_React$Component) {
     key: 'componentWillMount',
     value: function componentWillMount() {
       var newState = {
-        weeksArray: this.setWeeks(),
-        selectedArray: ["Nie zaznaczono żadnych dat"]
+        daysArray: this.setDays(this.props.today.clone().startOf('M'))
       };
       return this.setState(newState);
     }
@@ -10268,16 +10303,16 @@ var Calendar = function (_React$Component) {
         'div',
         null,
         _react2.default.createElement(Header, null),
-        _react2.default.createElement(Navbar, { currentFirstDay: this.state.currentFirstDay.format('MMMM') }),
+        _react2.default.createElement(Navbar, { currentFirstDay: this.state.currentFirstDay.format('MMMM YYYY'), onClick: this.handleArrowClick }),
         _react2.default.createElement(DaysNames, { daysNames: this.state.daysNames }),
-        _react2.default.createElement(MainPanel, { daysArray: this.state.daysArray, weeksArray: this.state.weeksArray }),
-        ' '
+        _react2.default.createElement(MainPanel, { daysArray: this.state.daysArray, onClick: this.handleDayClick }),
+        _react2.default.createElement(SelectedDates, { selectedArray: this.state.selectedArray.join(", ") })
       );
     }
   }, {
     key: 'setDaysNames',
     value: function setDaysNames() {
-      var firstDay = this.props.today.clone().startOf('w').subtract(1, 'd');
+      var firstDay = this.props.today.clone().startOf('w').add(-1, 'd');
       var daysNames = [];
       for (var i = 0; i < 7; i++) {
         daysNames.push(firstDay.clone().add(i + 1, 'd').format('ddd'));
@@ -10294,23 +10329,19 @@ var Calendar = function (_React$Component) {
   }, {
     key: 'setDays',
     value: function setDays(currentFirstDay) {
-      var today = this.props.today.clone();
       var currentDay = currentFirstDay.clone().startOf('w');
-      var numberOfWeek = currentFirstDay.clone().endOf('M').week() - currentFirstDay.clone().week() + 1;
+
+      var startOfMonthWeek = currentFirstDay.clone().week() === 52 || currentFirstDay.clone().week() === 53 ? 0 : currentFirstDay.clone().week();
+      var endOfMonthWeek = currentFirstDay.clone().endOf('M').week() === 1 ? 53 : currentFirstDay.clone().endOf('M').week();
+
       var daysArray = [];
-      var daysInWeekArray = [];
-      var weeksInMonthArray = [];
-
-      for (var i = 0; i < numberOfWeek; i++) {
+      for (var i = 0; i < endOfMonthWeek - startOfMonthWeek + 1; i++) {
         for (var j = 0; j < 7; j++) {
-          var isToday = void 0,
-              isSelected = void 0,
-              isOtherMonth = void 0,
-              featuresArray = "";
+          var isToday = currentDay.format('L') == this.props.today.clone().format('L') ? "today" : "";
+          var isOtherMonth = currentDay.month() !== currentFirstDay.month() ? "otherMonth" : "";
+          var isSelected = this.state.selectedArray.indexOf(currentDay.format('L')) > -1 ? "selected" : "";
 
-          isToday = currentDay.format('L') == today.format('L') ? "today" : "";
-          isOtherMonth = currentDay.month() !== currentFirstDay.month() ? "otherMonth" : "";
-          featuresArray = {
+          var featuresArray = {
             date: currentDay.clone(),
             isToday: isToday,
             isSelected: isSelected,
@@ -10320,23 +10351,8 @@ var Calendar = function (_React$Component) {
           currentDay = currentDay.add(1, 'd');
         }
       }
+
       return daysArray;
-    }
-  }, {
-    key: 'setWeeks',
-    value: function setWeeks() {
-      var _this2 = this;
-
-      var daysArray = this.state.daysArray;
-      var weeksNumbers = [];
-
-      for (var i = 0; i < daysArray.length / 7; i++) {
-        weeksNumbers.push(daysArray[i * 7].date.week());
-      }
-      var weeksMap = weeksNumbers.map(function (el, i) {
-        return _react2.default.createElement(Week, { key: el, weekNumber: el, daysArray: _this2.state.daysArray, weeksArray: _this2.state.weeksArray });
-      });
-      return weeksMap;
     }
   }]);
 
@@ -10355,14 +10371,14 @@ var SevenDays = function (_React$Component2) {
   _createClass(SevenDays, [{
     key: 'render',
     value: function render() {
-      var _this4 = this;
+      var _this3 = this;
 
       var daysArray = this.props.daysArray;
       var sevenDaysMap = daysArray.map(function (el, i) {
-        if (el.date.week() === _this4.props.weekNumber) {
+        if (el.date.week() === _this3.props.weekNumber) {
           return _react2.default.createElement(
             'div',
-            { key: el.date.format('L'), className: "col-1 day " + el.isToday + " " + el.isOtherMonth + " " + el.isSelected },
+            { key: el.date.format('L'), id: el.date.format('L'), className: "col-1 day " + el.isToday + " " + el.isOtherMonth + " " + el.isSelected, onClick: _this3.props.onClick },
             el.date.date()
           );
         }
@@ -10397,7 +10413,7 @@ var Week = function (_React$Component3) {
   _createClass(Week, [{
     key: 'render',
     value: function render() {
-      return _react2.default.createElement(SevenDays, { weekNumber: this.props.weekNumber, daysArray: this.props.daysArray });
+      return _react2.default.createElement(SevenDays, { weekNumber: this.props.weekNumber, daysArray: this.props.daysArray, onClick: this.props.onClick });
     }
   }]);
 
@@ -10416,13 +10432,25 @@ var MainPanel = function (_React$Component4) {
   _createClass(MainPanel, [{
     key: 'render',
     value: function render() {
+      var _this6 = this;
+
+      var daysArray = this.props.daysArray;
+      var weeksNumbers = [];
+
+      for (var i = 0; i < daysArray.length / 7; i++) {
+        weeksNumbers.push(daysArray[i * 7].date.week());
+      }
+
+      var weeksMap = weeksNumbers.map(function (el, i) {
+        return _react2.default.createElement(Week, { key: el, weekNumber: el, daysArray: _this6.props.daysArray, onClick: _this6.props.onClick });
+      });
       return _react2.default.createElement(
         'section',
         { className: 'mainPanel' },
         _react2.default.createElement(
           'div',
           { className: 'container' },
-          this.props.weeksArray
+          weeksMap
         )
       );
     }
@@ -10486,8 +10514,18 @@ var Navbar = function (_React$Component6) {
           { className: 'container flex_row' },
           _react2.default.createElement(
             'div',
-            { className: 'col-8 monthName' },
+            { className: 'col-1 prev', 'data-step': '-1', onClick: this.props.onClick },
+            '\xAB'
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'col-6 monthName' },
             this.props.currentFirstDay
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'col-1 next', 'data-step': '1', onClick: this.props.onClick },
+            '\xBB'
           )
         )
       );
@@ -10509,7 +10547,6 @@ var DaysNames = function (_React$Component7) {
   _createClass(DaysNames, [{
     key: 'render',
     value: function render() {
-
       return _react2.default.createElement(
         'section',
         { className: 'daysNames' },
@@ -10552,7 +10589,7 @@ var SelectedDates = function (_React$Component8) {
           _react2.default.createElement(
             'div',
             { className: 'col-8 board' },
-            'Nie zaznaczono \u017Cadnych dat'
+            this.props.selectedArray
           )
         )
       );
