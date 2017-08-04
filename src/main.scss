@@ -1,0 +1,143 @@
+@import "modules/colors";
+@import "modules/reset";
+
+* {
+  // Border Test
+  // border: 1px solid black;
+}
+/**
+ * -----------------------------------------------------------------------
+ *                           Global grid settings
+ * -----------------------------------------------------------------------
+ */
+$cols: 8;
+$width-base: (100%/$cols);
+
+.container {
+  width: 100%;
+  max-width: 30rem;
+  margin: 0 auto;
+}
+
+.flex_row {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: center;
+}
+@for $i from 1 through $cols {
+  .col-#{$i} {
+    width: $width-base * $i;
+    min-height: 1px;
+  }
+}
+/**
+ * -----------------------------------------------------------------------
+ *                            Sections settings
+ * -----------------------------------------------------------------------
+ */
+header {
+  .container.flex_row {
+    padding: 1rem 0;
+
+    div {
+      h1 {
+        font-size: 3rem;
+      }
+    }
+  }
+}
+
+section.navbar {
+  .container.flex_row {
+    padding: 0.5rem 0;
+
+    .next,
+    .prev {
+      font-size: 2rem;
+      cursor: pointer;
+
+      &:hover {
+        font-weight: bolder;
+      }
+    }
+
+    .monthName {
+      font-size: 2rem;
+      text-transform: uppercase;
+    }
+  }
+}
+
+section.daysNames {
+  .container.flex_row {
+    div {
+      background-color: $c3;
+      color: $c1;
+      font-weight: bolder;
+      padding: 1.3rem 0;
+      border: 1px solid $c1;
+
+      &:first-child {
+        background-color: $c1;
+        // border: 0;
+      }
+    }
+  }
+}
+
+section.mainPanel {
+  .container {
+    .week.flex_row {
+      .weekNumber {
+        background-color: $c3;
+        color: $c1;
+        font-weight: bolder;
+        padding: 1.3rem 0;
+        border: 1px solid $c1;
+      }
+
+      .day {
+        padding: 1.3rem 0;
+        border: 1px solid $c9;
+        cursor: pointer;
+
+        &:hover {
+          background-color: $c6;
+        }
+      }
+
+      .otherMonth {
+        background-color: $c9;
+        color: $c3;
+      }
+
+      .today {
+        background-color: $c7;
+      }
+
+      .selected {
+        background-color: $c5;
+
+        &:hover {
+          background-color: $c8;
+        }
+      }
+    }
+  }
+}
+
+section.selectedDates {
+  .container.flex_row {
+    .title {
+      padding: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .board {
+      padding: 1rem;
+      text-align: left;
+      border: 1px solid #000;
+    }
+  }
+}
