@@ -864,8 +864,8 @@ function localeMonthsShort (m, format) {
         this._monthsShort[MONTHS_IN_FORMAT.test(format) ? 'format' : 'standalone'][m.month()];
 }
 
-function handleStrictParse(monthName, format, strict) {
-    var i, ii, mom, llc = monthName.toLocaleLowerCase();
+function handleStrictParse(month_name, format, strict) {
+    var i, ii, mom, llc = month_name.toLocaleLowerCase();
     if (!this._monthsParse) {
         // this is not used
         this._monthsParse = [];
@@ -905,11 +905,11 @@ function handleStrictParse(monthName, format, strict) {
     }
 }
 
-function localeMonthsParse (monthName, format, strict) {
+function localeMonthsParse (month_name, format, strict) {
     var i, mom, regex;
 
     if (this._monthsParseExact) {
-        return handleStrictParse.call(this, monthName, format, strict);
+        return handleStrictParse.call(this, month_name, format, strict);
     }
 
     if (!this._monthsParse) {
@@ -933,11 +933,11 @@ function localeMonthsParse (monthName, format, strict) {
             this._monthsParse[i] = new RegExp(regex.replace('.', ''), 'i');
         }
         // test the regex
-        if (strict && format === 'MMMM' && this._longMonthsParse[i].test(monthName)) {
+        if (strict && format === 'MMMM' && this._longMonthsParse[i].test(month_name)) {
             return i;
-        } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(monthName)) {
+        } else if (strict && format === 'MMM' && this._shortMonthsParse[i].test(month_name)) {
             return i;
-        } else if (!strict && this._monthsParse[i].test(monthName)) {
+        } else if (!strict && this._monthsParse[i].test(month_name)) {
             return i;
         }
     }

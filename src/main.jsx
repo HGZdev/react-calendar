@@ -8,7 +8,7 @@ class Calendar extends React.Component {
     this.state = {
       today: this.props.today,
       currentFirstDay: this.props.today.clone().startOf('M'),
-      daysNames: this.setDaysNames(),
+      DaysNames: this.setDaysNames(),
       daysArray: "",
       selectedArray: []
     }
@@ -28,9 +28,9 @@ class Calendar extends React.Component {
       <div>
         <Header/>
         <Navbar currentFirstDay={this.state.currentFirstDay.format('MMMM YYYY')} onClick={this.handleArrowClick}/>
-        <DaysNames daysNames={this.state.daysNames}/>
+        <DaysNames DaysNames={this.state.DaysNames}/>
         <MainPanel daysArray={this.state.daysArray} onClick={this.handleDayClick}/>
-        <SelectedDates selectedArray={this.state.selectedArray.join(", ")}/>
+        <DatesSelected selectedArray={this.state.selectedArray.join(", ")}/>
       </div>
     )
   }
@@ -63,8 +63,8 @@ class Calendar extends React.Component {
         let isToday = (currentDay.format('L') == this.props.today.clone().format('L'))
           ? "today"
           : "";
-        let isOtherMonth = (currentDay.month() !== currentFirstDay.month())
-          ? "otherMonth"
+        let isother_month = (currentDay.month() !== currentFirstDay.month())
+          ? "other_month"
           : "";
         let isSelected = (this.state.selectedArray.indexOf(currentDay.format('L')) > -1)
           ? "selected"
@@ -74,7 +74,7 @@ class Calendar extends React.Component {
           date: currentDay.clone(),
           isToday: isToday,
           isSelected: isSelected,
-          isOtherMonth: isOtherMonth
+          isother_month: isother_month
         };
         daysArray.push(featuresArray);
         currentDay = currentDay.add(1, 'd');
@@ -102,6 +102,7 @@ class Calendar extends React.Component {
         }
       }
     }
+    selectedArrayCopy.sort();
     let newState = {
       daysArray: daysArrayCopy,
       selectedArray: selectedArrayCopy
@@ -124,15 +125,15 @@ class SevenDays extends React.Component {
   render() {
     let daysArray = this.props.daysArray;
     let sevenDaysMap = daysArray.map((el, i) => {
-      if (el.date.week() === this.props.weekNumber) {
-        return <div key={el.date.format('L')} id={el.date.format('L')} className={"col-1 day " + el.isToday + " " + el.isOtherMonth + " " + el.isSelected} onClick={this.props.onClick}>{el.date.date()}</div>;
+      if (el.date.week() === this.props.week_number) {
+        return <div key={el.date.format('L')} id={el.date.format('L')} className={"col-1 day " + el.isToday + " " + el.isother_month + " " + el.isSelected} onClick={this.props.onClick}>{el.date.date()}</div>;
       }
     }).filter((el) => {
       return el
     });
     return (
-      <div key={this.props.weekNumber} className="week flex_row">
-        <div className="col-1 weekNumber">{this.props.weekNumber}</div>
+      <div key={this.props.week_number} className="week flex">
+        <div className="col-1 week_number">{this.props.week_number}</div>
         {sevenDaysMap}
       </div>
     );
@@ -141,7 +142,7 @@ class SevenDays extends React.Component {
 
 class Week extends React.Component {
   render() {
-    return <SevenDays weekNumber={this.props.weekNumber} daysArray={this.props.daysArray} onClick={this.props.onClick}/>
+    return <SevenDays week_number={this.props.week_number} daysArray={this.props.daysArray} onClick={this.props.onClick}/>
   }
 }
 
@@ -155,10 +156,10 @@ class MainPanel extends React.Component {
     }
 
     let weeksMap = weeksNumbers.map((el, i) => {
-      return <Week key={el} weekNumber={el} daysArray={this.props.daysArray} onClick={this.props.onClick}/>;
+      return <Week key={el} week_number={el} daysArray={this.props.daysArray} onClick={this.props.onClick}/>;
     })
     return (
-      <section className="mainPanel">
+      <section className="main_panel">
         <div className="container">
           {weeksMap}
         </div>
@@ -171,7 +172,7 @@ class Header extends React.Component {
   render() {
     return (
       <header>
-        <div className="container flex_row">
+        <div className="container flex">
           <div className="col-8">
             <h1>React Calendar</h1>
           </div>
@@ -185,9 +186,9 @@ class Navbar extends React.Component {
   render() {
     return (
       <section className="navbar">
-        <div className="container flex_row">
+        <div className="container flex">
           <div className="col-1 prev" data-step="-1" onClick={this.props.onClick}>&laquo;</div>
-          <div className="col-6 monthName">{this.props.currentFirstDay}</div>
+          <div className="col-6 month_name">{this.props.currentFirstDay}</div>
           <div className="col-1 next" data-step="1" onClick={this.props.onClick}>&raquo;</div>
         </div>
       </section>
@@ -198,21 +199,21 @@ class Navbar extends React.Component {
 class DaysNames extends React.Component {
   render() {
     return (
-      <section className="daysNames">
-        <div className="container flex_row">
+      <section className="days_names">
+        <div className="container flex">
           <div className="col-1"></div>
-          {this.props.daysNames}
+          {this.props.DaysNames}
         </div>
       </section>
     );
   }
 }
 
-class SelectedDates extends React.Component {
+class DatesSelected extends React.Component {
   render() {
     return (
-      <section className="selectedDates">
-        <div className="container flex_row">
+      <section className="dates_selected">
+        <div className="container flex">
           <div className="col-8 title">
             Wybrane daty:
           </div>

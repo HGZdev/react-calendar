@@ -1,15 +1,11 @@
 @import "modules/colors";
 @import "modules/reset";
 
-* {
-  // Border Test
-  // border: 1px solid black;
-}
 /**
  * -----------------------------------------------------------------------
  *                           Global grid settings
  * -----------------------------------------------------------------------
- */ 
+ */
 $cols: 8;
 $width-base: (100%/$cols);
 
@@ -19,7 +15,7 @@ $width-base: (100%/$cols);
   margin: 0 auto;
 }
 
-.flex_row {
+.flex {
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
@@ -37,7 +33,7 @@ $width-base: (100%/$cols);
  * -----------------------------------------------------------------------
  */
 header {
-  .container.flex_row {
+  .container.flex {
     padding: 1rem 0;
 
     div {
@@ -49,7 +45,7 @@ header {
 }
 
 section.navbar {
-  .container.flex_row {
+  .container.flex {
     padding: 0.5rem 0;
 
     .next,
@@ -62,15 +58,15 @@ section.navbar {
       }
     }
 
-    .monthName {
+    .month_name {
       font-size: 2rem;
       text-transform: uppercase;
     }
   }
 }
 
-section.daysNames {
-  .container.flex_row {
+section.days_names {
+  .container.flex {
     div {
       background-color: $c3;
       color: $c1;
@@ -86,10 +82,10 @@ section.daysNames {
   }
 }
 
-section.mainPanel {
+section.main_panel {
   .container {
-    .week.flex_row {
-      .weekNumber {
+    .week.flex {
+      .week_number {
         background-color: $c3;
         color: $c1;
         font-weight: bolder;
@@ -107,7 +103,7 @@ section.mainPanel {
         }
       }
 
-      .otherMonth {
+      .other_month {
         background-color: $c9;
         color: $c3;
       }
@@ -118,17 +114,13 @@ section.mainPanel {
 
       .selected {
         background-color: $c5;
-
-        &:hover {
-          background-color: $c8;
-        }
       }
     }
   }
 }
 
-section.selectedDates {
-  .container.flex_row {
+section.dates_selected {
+  .container.flex {
     .title {
       padding: 1rem;
       font-size: 1.5rem;
