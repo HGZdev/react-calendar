@@ -187,9 +187,11 @@ class Navbar extends React.Component {
     return (
       <section className="navbar">
         <div className="container flex">
-          <div className="col-1 prev" data-step="-1" onClick={this.props.onClick}>&laquo;</div>
-          <div className="col-6 month_name">{this.props.currentFirstDay}</div>
-          <div className="col-1 next" data-step="1" onClick={this.props.onClick}>&raquo;</div>
+          <div className="col-1 prev" data-step="-12" onClick={this.props.onClick}>&laquo;</div>
+          <div className="col-1 prev" data-step="-1" onClick={this.props.onClick}>&lt;</div>
+          <div className="col-4 month_name">{this.props.currentFirstDay}</div>
+          <div className="col-1 next" data-step="1" onClick={this.props.onClick}>&gt;</div>
+          <div className="col-1 next" data-step="12" onClick={this.props.onClick}>&raquo;</div>
         </div>
       </section>
     );
