@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 class Calendar extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -12,8 +11,6 @@ class Calendar extends React.Component {
       daysArray: "",
       selectedArray: []
     }
-    this.handleDayClick = this.handleDayClick.bind(this);
-    this.handleArrowClick = this.handleArrowClick.bind(this);
   }
 
   componentWillMount() {
@@ -30,9 +27,45 @@ class Calendar extends React.Component {
         <Navbar currentFirstDay={this.state.currentFirstDay.format('MMMM YYYY')} onClick={this.handleArrowClick}/>
         <DaysNames DaysNames={this.state.DaysNames}/>
         <MainPanel daysArray={this.state.daysArray} onClick={this.handleDayClick}/>
-        <DatesSelected selectedArray={this.state.selectedArray.join(", ")}/>
+        <DatesSelected selectedArray={this.state.selectedArray}/>
       </div>
     )
+  }
+
+  handleDayClick = (e) => {
+    let daysArrayCopy = this.state.daysArray;
+    let selectedArrayCopy = this.state.selectedArray;
+
+    for (var i = 0; i < daysArrayCopy.length; i++) {
+
+      // Searching for clicked day in current daysArray
+      if (daysArrayCopy[i].date.format('L') === e.target.id) {
+
+        // Selected / unselected tasks
+        if (e.target.classList.contains('selected')) {
+          daysArrayCopy[i].isSelected = "";
+
+          // Searching for clicked day in selectedArray in order to remove it
+          for (var j = 0; j < selectedArrayCopy.length; j++) {
+            if (selectedArrayCopy[j].date.format('L') === e.target.id) {
+              selectedArrayCopy.splice(j, 1);
+            }
+          }
+        } else {
+          daysArrayCopy[i].isSelected = "selected";
+          selectedArrayCopy.push(daysArrayCopy[i]);
+        }
+      }
+    }
+
+    // Sort selectedArray by date
+    selectedArrayCopy.sort((a,b) => a.date - b.date);;
+
+    let newState = {
+      daysArray: daysArrayCopy,
+      selectedArray: selectedArrayCopy
+    }
+    return this.setState(newState);
   }
 
   setDaysNames() {
@@ -84,33 +117,7 @@ class Calendar extends React.Component {
     return daysArray;
   }
 
-  handleDayClick = (e) => {
-    console.log('Clicked day!');
-    let daysArrayCopy = this.state.daysArray;
-    let selectedArrayCopy = this.state.selectedArray;
-
-    for (var i = 0; i < daysArrayCopy.length; i++) {
-      if (daysArrayCopy[i].date.format('L') === e.target.id) {
-        // console.log(daysArrayCopy[i].date.format('L'));
-        if (e.target.classList.contains('selected')) {
-          daysArrayCopy[i].isSelected = "";
-          var index = selectedArrayCopy.indexOf(e.target.id);
-          selectedArrayCopy.splice(index, 1);
-        } else {
-          daysArrayCopy[i].isSelected = "selected";
-          selectedArrayCopy.push(e.target.id);
-        }
-      }
-    }
-    selectedArrayCopy.sort();
-    let newState = {
-      daysArray: daysArrayCopy,
-      selectedArray: selectedArrayCopy
-    }
-    return this.setState(newState);
-  }
-
-  handleArrowClick = (e) => {
+    handleArrowClick = (e) => {
     console.log('Clicked arrow!');
     let newDate = this.state.currentFirstDay.clone().add(e.target.dataset.step, "M");
     let newState = {
@@ -213,6 +220,14 @@ class DaysNames extends React.Component {
 
 class DatesSelected extends React.Component {
   render() {
+
+    let selectedArray = this.props.selectedArray;
+    let selectedArrayCopy = [];
+
+    for (var i = 0; i < selectedArray.length; i++) {
+      selectedArrayCopy.push(selectedArray[i].date.format('L'))
+    }
+
     return (
       <section className="dates_selected">
         <div className="container flex">
@@ -220,7 +235,7 @@ class DatesSelected extends React.Component {
             Wybrane daty:
           </div>
           <div className="col-8 board">
-            {this.props.selectedArray}
+            {selectedArrayCopy.join(", ")}
           </div>
         </div>
       </section>
