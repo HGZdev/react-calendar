@@ -128,53 +128,6 @@ class Calendar extends React.Component {
   }
 }
 
-class SevenDays extends React.Component {
-  render() {
-    let daysArray = this.props.daysArray;
-    let sevenDaysMap = daysArray.map((el, i) => {
-      if (el.date.week() === this.props.week_number) {
-        return <div key={el.date.format('L')} id={el.date.format('L')} className={"col-1 day " + el.isToday + " " + el.isother_month + " " + el.isSelected} onClick={this.props.onClick}>{el.date.date()}</div>;
-      }
-    }).filter((el) => {
-      return el
-    });
-    return (
-      <div key={this.props.week_number} className="week flex">
-        <div className="col-1 week_number">{this.props.week_number}</div>
-        {sevenDaysMap}
-      </div>
-    );
-  }
-}
-
-class Week extends React.Component {
-  render() {
-    return <SevenDays week_number={this.props.week_number} daysArray={this.props.daysArray} onClick={this.props.onClick}/>
-  }
-}
-
-class MainPanel extends React.Component {
-  render() {
-    let daysArray = this.props.daysArray;
-    let weeksNumbers = [];
-
-    for (var i = 0; i < daysArray.length / 7; i++) {
-      weeksNumbers.push(daysArray[i * 7].date.week());
-    }
-
-    let weeksMap = weeksNumbers.map((el, i) => {
-      return <Week key={el} week_number={el} daysArray={this.props.daysArray} onClick={this.props.onClick}/>;
-    })
-    return (
-      <section className="main_panel">
-        <div className="container">
-          {weeksMap}
-        </div>
-      </section>
-    );
-  }
-}
-
 class Header extends React.Component {
   render() {
     return (
@@ -218,16 +171,59 @@ class DaysNames extends React.Component {
   }
 }
 
-class DatesSelected extends React.Component {
+class MainPanel extends React.Component {
   render() {
+    let daysArray = this.props.daysArray;
+    let weeksNumbers = [];
 
-    let selectedArray = this.props.selectedArray;
-    let selectedArrayCopy = [];
-
-    for (var i = 0; i < selectedArray.length; i++) {
-      selectedArrayCopy.push(selectedArray[i].date.format('L'))
+    for (var i = 0; i < daysArray.length / 7; i++) {
+      weeksNumbers.push(daysArray[i * 7].date.week());
     }
 
+    let weeksMap = weeksNumbers.map((el, i) => {
+      return <Week key={el} week_number={el} daysArray={this.props.daysArray} onClick={this.props.onClick}/>;
+    })
+    return (
+      <section className="main_panel">
+        <div className="container">
+          {weeksMap}
+        </div>
+      </section>
+    );
+  }
+}
+
+class Week extends React.Component {
+  render() {
+    return <SevenDays week_number={this.props.week_number} daysArray={this.props.daysArray} onClick={this.props.onClick}/>
+  }
+}
+
+class SevenDays extends React.Component {
+  render() {
+    let daysArray = this.props.daysArray;
+    let sevenDaysMap = daysArray.map((el, i) => {
+      if (el.date.week() === this.props.week_number) {
+        return <div key={el.date.format('L')} id={el.date.format('L')} className={"col-1 day " + el.isToday + " " + el.isother_month + " " + el.isSelected} onClick={this.props.onClick}>{el.date.date()}</div>;
+      }
+    }).filter((el) => {
+      return el
+    });
+    return (
+      <div key={this.props.week_number} className="week flex">
+        <div className="col-1 week_number">{this.props.week_number}</div>
+        {sevenDaysMap}
+      </div>
+    );
+  }
+}
+
+class DatesSelected extends React.Component {
+  render() {
+    let selectedArray = this.props.selectedArray;
+    let selectedArrayCopy = selectedArray.map((el, i)=> {
+      return <div key={el.date.format('L')} className="date flex"><span>{el.date.format('L')}</span></div>
+    })
     return (
       <section className="dates_selected">
         <div className="container flex">
@@ -235,7 +231,7 @@ class DatesSelected extends React.Component {
             Wybrane daty:
           </div>
           <div className="col-8 board">
-            {selectedArrayCopy.join(", ")}
+            {selectedArrayCopy}
           </div>
         </div>
       </section>

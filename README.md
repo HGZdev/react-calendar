@@ -4,7 +4,7 @@
 
 This is a project of calendar built with React on a basis of Moment.js library.
 
-#### Functionalities
+**Functionalities**
 
 - Automatically generates the selected month from the selected year
 - Marks today in the calendar
