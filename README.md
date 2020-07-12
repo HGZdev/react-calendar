@@ -1,6 +1,6 @@
 # React Calendar
 
-**Demo:** https://hgzwebdesign.github.io/React_Calendar
+**Demo:** https://hgzdev.github.io/React_Calendar
 
 This is a project of calendar built with React on a basis of Moment.js library.
 
