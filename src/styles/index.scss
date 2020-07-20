@@ -6,7 +6,7 @@
  * -----------------------------------------------------------------------
  */
 $cols: 8;
-$width-base: (100%/$cols);
+$width-base: (100% / $cols);
 
 .container {
   width: 100%;
@@ -101,7 +101,7 @@ section.main_panel {
         }
       }
 
-      .other_month {
+      .otherMonth {
         background-color: rgba($c9, 0.7);
         color: $c3;
       }
@@ -138,7 +138,8 @@ section.dates_selected {
         background-color: rgba($c4, 0.8);
         border-radius: 0.5rem;
 
-        span {}
+        span {
+        }
       }
     }
   }
