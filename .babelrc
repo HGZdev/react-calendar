@@ -1,0 +1,39 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"modules": false,
+				"targets": {
+					"browsers": [
+						"last 2 Chrome versions",
+						"last 2 Firefox versions",
+						"last 2 Safari versions",
+						"last 2 iOS versions",
+						"last 1 Android version",
+						"last 1 ChromeAndroid version",
+						"ie 11"
+					]
+				}
+			}
+		],
+		"@babel/preset-react"
+	],
+
+	"plugins": [
+		["@babel/plugin-proposal-decorators", {"legacy": true}],
+		// class { handleClick = () => { } }
+		["@babel/plugin-proposal-class-properties", {"loose": true}],
+		// Support import() syntax
+		"@babel/plugin-syntax-dynamic-import",
+		// Accessing deeply nested properties: { obj?.foo?.bar?.baz }
+		"@babel/plugin-proposal-optional-chaining"
+	],
+
+	"env": {
+		"test": {
+			// jest needs it for aliases compilation (via webpack?)
+			"plugins": ["@babel/plugin-transform-modules-commonjs"]
+		}
+	}
+}
