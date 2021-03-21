@@ -1,4 +1,7 @@
-.DS_store
-node_modules/*
-# dist
-
+.DS_Store
+.vscode
+*.log
+coverage
+data
+node_modules
+yarn.lock
