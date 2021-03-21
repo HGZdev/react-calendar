@@ -1,69 +1,94 @@
-// const webpack = require('webpack')
-const path = require("path");
-// const HtmlWebpackPlugin = require('html-webpack-plugin')
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
+const {HotModuleReplacementPlugin, DefinePlugin} = require('webpack')
 
-const outputDirectory = "dist";
-const LOCAL_PORT = 3000;
+// NOTE: config duplication
+const LOCAL_PORT = 3000
+const LOCAL_SERVER_PORT = 8080
+const OUT_DIR = 'build'
+const OUT_FILE = 'bundle.js'
+const APP_ICON_PATH = 'assets/favicon.ico'
+
+const {NODE_ENV} = process.env
+const PROD = NODE_ENV === 'production'
 
 module.exports = {
-  entry: ["@babel/polyfill", "./src/index.js"],
-  output: {
-    path: path.join(__dirname, outputDirectory),
-    filename: "bundle.js",
-    // // publicPath allows you to specify the base path for all the assets within your application (compile proper path to dynamic index.html file)
-    // publicPath: '.' or outputDirectory...,
-    // // Keeps path name in bundle.js comments
-    // pathinfo: true,
-  },
-  // set default options for webpack-dev-server mode
-  devServer: {
-    // hot update
-    hot: true,
-    // refresh app automatically after update
-    inline: true,
-    // prevent removing bundle.js on development mode run => available for local compilation (e.g. we can check whether paths in dynamic index.html are correct).
-    writeToDisk: true,
-    // The contentBase in devServer represents the location where the server is told to provide content.
-    // contentBase: '.', // works with src="bundle.js" in root
-    port: LOCAL_PORT,
-    // historyAPIFallback will redirect 404s to /index.html => fix a problem (works only for local dev-server) with "cannot GET /URL" error on refresh with React Router https://tylermcginnis.com/react-router-cannot-get-url-refresh/, ALTERNATIVE method (hack): HashRouter
-    // historyApiFallback: true,
-  },
-  // keep local production mode hot
-  watch: true,
-  devtool: "inline-source-map",
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
-        use: ["babel-loader"],
-      },
-      {
-        test: /\.s[ac]ss$/i,
-        use: [
-          // Creates `style` nodes from JS strings
-          "style-loader",
-          // Translates CSS into CommonJS
-          {loader: "css-loader", options: {sourceMap: true}},
-          // Compiles Sass to CSS
-          {loader: "sass-loader", options: {sourceMap: true}},
-        ],
-      },
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg|jpg)$/,
-        loader: "url-loader?limit=100000",
-      },
-    ],
-  },
-  plugins: [
-    new CleanWebpackPlugin(),
-    // // Dynamic index.html generator
-    // // Beware: github-pagres doesn't like index.html in different dir than root (static needed)
-    // new HtmlWebpackPlugin({
-    // 	template: 'index.html', // pointing to base html for minified html.index creation (with auto injected bundle.js script) - default 'index.html'
-    // 	title: 'Kreator Fałszywych Cytatów', // 'template' prop will override 'title' prop
-    // }),
-  ],
-};
+	entry: ['@babel/polyfill', './src/client/index.js'],
+	output: {
+		path: path.join(__dirname, OUT_DIR),
+		filename: OUT_FILE,
+		// publicPath allows you to specify the base path for all the assets within your application
+		// publicPath: '/',
+	},
+	module: {
+		rules: [
+			{
+				test: /\.(js|jsx)$/,
+				exclude: /node_modules/,
+				use: ['babel-loader'],
+			},
+
+			// CSS, and Sass
+			{
+				test: /\.(css)$/,
+				use: ['style-loader', 'css-loader'],
+			},
+
+			// Images
+			{
+				test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
+				type: 'asset/resource',
+			},
+
+			// Fonts and SVG
+			{
+				test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
+				type: 'asset/inline',
+			},
+		],
+	},
+	mode: NODE_ENV || 'development',
+	devtool: PROD && 'source-map',
+	devServer: {
+		port: LOCAL_PORT,
+		proxy: {
+			'/api': `http://localhost:${LOCAL_SERVER_PORT}`,
+		},
+		// historyAPIFallback will redirect 404s to /index.html => fix a problem (works only for local dev-server) with "cannot GET /URL" error on refresh with React Router https://tylermcginnis.com/react-router-cannot-get-url-refresh/, ALTERNATIVE method (hack): HashRouter
+		historyApiFallback: true,
+		compress: true,
+		hot: true,
+	},
+	plugins: [
+		new CleanWebpackPlugin(),
+		new HtmlWebpackPlugin({
+			template: 'index.html',
+			favicon: `./${APP_ICON_PATH}`,
+		}),
+		new HotModuleReplacementPlugin(),
+		// Access to process.env variables at front-end (e.g.: ApolloClient url requires this)
+		new DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+				DEBUG: JSON.stringify(process.env.DEBUG),
+			},
+		}),
+	],
+	resolve: {
+		// aliases - compilation paths
+		alias: {
+			src: path.resolve(__dirname, './src/'),
+			config: path.resolve(__dirname, './config/'),
+			plugins: path.resolve(__dirname, './plugins/'),
+			data: path.resolve(__dirname, './data/'),
+			assets: path.resolve(__dirname, './assets/'),
+			// eslint-disable-next-line camelcase
+			node_modules: path.resolve(__dirname, './node_modules/'),
+			Components: path.resolve(__dirname, './src/client/Components/'),
+			Styles: path.resolve(__dirname, './src/client/styles/'),
+		},
+		// aliases - ignore lack of file extensions in import paths
+		extensions: ['.mjs', '.js', '.jsx', '.css', '.scss'],
+	},
+}
