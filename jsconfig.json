@@ -1,0 +1,26 @@
+// js configuration file of VS Code
+
+// NOTE: jsconfig does NOT work as ".js" file with export.module
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		// turning off annoying experimentalDecorators warning in VSCode
+		"experimentalDecorators": true,
+		"module": "commonjs",
+		"target": "es2020",
+		// don't ignore .jsx files
+		"jsx": "preserve",
+		// aliases - definitions for VS Code tools like path-intellisense (this is separate from webpack compilation!)
+		"baseUrl": ".",
+		"paths": {
+			"src/*": ["src/*"],
+			"config/*": ["config/*"],
+			"plugins/*": ["plugins/*"],
+			"data/*": ["data/*"],
+			"assets/*": ["assets/*"],
+			"Components/*": ["src/client/Components/*"],
+			"Styles/*": ["src/client/styles/*"]
+		}
+	},
+	"exclude": ["node_modules", "build", "assets"]
+}
